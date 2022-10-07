@@ -1,0 +1,69 @@
+version: "3.9"
+
+services:
+  redis-node1:
+    image: redis:latest
+    container_name: redis-node1
+    volumes:
+      - ./redis1.conf:/usr/local/etc/redis.conf
+    command: redis-server /usr/local/etc/redis.conf
+    ports:
+      - 6301:6301
+      - 6302:6302
+      - 6303:6303
+      - 6401:6401
+      - 6402:6402
+      - 6403:6403
+
+  redis-node2:
+    network_mode: "service:redis-node1"
+    image: redis:latest
+    container_name: redis-node2
+    volumes:
+      - ./redis2.conf:/usr/local/etc/redis.conf
+    command: redis-server /usr/local/etc/redis.conf
+
+  redis-node3:
+    network_mode: "service:redis-node1"
+    image: redis:latest
+    container_name: redis-node3
+    volumes:
+      - ./redis3.conf:/usr/local/etc/redis.conf
+    command: redis-server /usr/local/etc/redis.conf
+
+  redis-node4:
+    network_mode: "service:redis-node1"
+    image: redis:latest
+    container_name: redis-node4
+    volumes:
+      - ./redis4.conf:/usr/local/etc/redis.conf
+    command: redis-server /usr/local/etc/redis.conf
+
+  redis-node5:
+    network_mode: "service:redis-node1"
+    image: redis:latest
+    container_name: redis-node5
+    volumes:
+      - ./redis5.conf:/usr/local/etc/redis.conf
+    command: redis-server /usr/local/etc/redis.conf
+
+  redis-node6:
+    network_mode: "service:redis-node1"
+    image: redis:latest
+    container_name: redis-node6
+    volumes:
+      - ./redis6.conf:/usr/local/etc/redis.conf
+    command: redis-server /usr/local/etc/redis.conf
+
+  redis-cluster-entry:
+    network_mode: "service:redis-node1"
+    image: redis:latest
+    container_name: redis-cluster
+    command: redis-cli --cluster create 127.0.0.1:6301 127.0.0.1:6302 127.0.0.1:6303 127.0.0.1:6401 127.0.0.1:6402 127.0.0.1:6403 --cluster-replicas 1 --cluster-yes
+    depends_on:
+      - redis-node1
+      - redis-node2
+      - redis-node3
+      - redis-node4
+      - redis-node5
+      - redis-node6
