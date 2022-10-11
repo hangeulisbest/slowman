@@ -5,6 +5,7 @@ import com.example.slowman.model.Payload;
 import com.example.slowman.rediskey.RedisKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
@@ -24,5 +25,10 @@ public class PayloadController {
     @GetMapping("/payload/{id}")
     public Mono<Payload> findOne(@PathVariable String id) {
         return reactiveRedisRepository.get(RedisKey.Payload,id,Payload.class);
+    }
+
+    @GetMapping("/payload")
+    public Flux<Payload> findAll() {
+        return reactiveRedisRepository.get(RedisKey.Payload,Payload.class);
     }
 }
