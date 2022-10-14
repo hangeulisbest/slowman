@@ -1,6 +1,8 @@
 package com.example.slowman.model;
 
 import com.example.slowman.dto.PayloadDTO;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -16,7 +18,7 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-@RedisHash("Payload")
+@JsonAutoDetect(fieldVisibility = Visibility.ANY)
 public class Payload {
 
     @Id

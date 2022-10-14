@@ -1,16 +1,12 @@
 package com.example.slowman.controller;
 
-import com.example.slowman.basicrepository.ReactiveRedisRepository;
 import com.example.slowman.dto.PayloadDTO;
 import com.example.slowman.model.Payload;
-import com.example.slowman.rediskey.RedisKey;
 import com.example.slowman.service.PayloadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor

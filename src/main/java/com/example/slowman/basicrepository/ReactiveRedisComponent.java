@@ -32,4 +32,8 @@ public class ReactiveRedisComponent {
     public Mono<Long> remove(String key, Object hashKey) {
         return redisOperations.opsForHash().remove(key, hashKey);
     }
+
+    public Mono<Long> pub(String topic,Object val) {
+        return redisOperations.convertAndSend(topic,val);
+    }
 }
