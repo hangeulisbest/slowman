@@ -26,9 +26,13 @@ import org.springframework.data.redis.connection.lettuce.LettuceClientConfigurat
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.ReactiveRedisOperations;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.ReactiveRedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import static com.example.slowman.constants.Topic.MESSAGE_PAYLOAD;
 
 @Slf4j
 @Configuration
@@ -79,5 +83,24 @@ public class RedisConfig {
         ).collect(Collectors.toList());
         return RedisClusterClient.create(nodes);
     }
+
+    /*
+    *  PubSub 을 위한 메세지 리스너
+    * */
+
+    @Bean
+    public ChannelTopic payloadTopic() {
+        return new ChannelTopic(MESSAGE_PAYLOAD);
+    }
+
+    @Bean
+    public ReactiveRedisMessageListenerContainer reactiveRedisMessageListenerContainer() {
+        ReactiveRedisMessageListenerContainer con = new ReactiveRedisMessageListenerContainer(createReactiveLettuceConnectionFactory());
+        // default topic
+        con.receive(payloadTopic());
+        return con;
+    }
+
+
 
 }

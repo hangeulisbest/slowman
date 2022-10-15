@@ -4,6 +4,7 @@ package com.example.slowman.basicrepository;
 import com.example.slowman.model.Payload;
 import com.example.slowman.util.ObjectMapperUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -34,7 +35,7 @@ public class ReactiveRedisRepository {
     }
 
 
-    public <T> Mono<Long> pub(String  topic,T t) {
+    public <T> Mono<Long> pub(ChannelTopic topic, T t) {
         return reactiveRedisComponent.pub(topic,t);
     }
 

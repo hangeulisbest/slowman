@@ -3,6 +3,7 @@ package com.example.slowman.basicrepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.ReactiveRedisOperations;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -33,7 +34,7 @@ public class ReactiveRedisComponent {
         return redisOperations.opsForHash().remove(key, hashKey);
     }
 
-    public Mono<Long> pub(String topic,Object val) {
-        return redisOperations.convertAndSend(topic,val);
+    public Mono<Long> pub(ChannelTopic topic, Object val) {
+        return redisOperations.convertAndSend(topic.getTopic(),val);
     }
 }

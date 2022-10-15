@@ -11,9 +11,10 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-public class PayloadController {
+public class PayloadApiController {
 
     private final PayloadService payloadService;
+
     @PostMapping("/payload")
     public Mono<Payload> save(@RequestBody PayloadDTO dto) {
         return payloadService.save(dto);
