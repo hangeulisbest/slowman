@@ -1,43 +1,83 @@
-plugins {
-	id 'org.springframework.boot' version '2.7.2'
-	id 'io.spring.dependency-management' version '1.0.12.RELEASE'
-	id 'java'
-}
-
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
-
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
+// 빌드 시
+buildscript {
+	ext {
+		springBootVersion = '2.7.2'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+		classpath "io.spring.gradle:dependency-management-plugin:1.0.12.RELEASE"
 	}
 }
 
-repositories {
-	mavenCentral()
+// 하위 모든 프로젝트 공통 세팅
+subprojects {
+	apply plugin: 'java'
+	apply plugin: 'idea'
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+
+	group = 'com.example'
+	version = '0.0.1-SNAPSHOT'
+	sourceCompatibility = '11'
+
+	repositories {
+		mavenCentral()
+	}
+
+	configurations {
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
+	}
+
+	// 하위 모듈에서 공통으로 사용하는 세팅 추가
+	dependencies {
+		implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+		implementation 'org.springframework.boot:spring-boot-starter-webflux'
+		// macOS m1에서만 발생??
+		implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
+		implementation 'org.springframework.boot:spring-boot-starter-validation'
+		annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		testImplementation 'io.projectreactor:reactor-test'
+
+		// lombok
+		annotationProcessor 'org.projectlombok:lombok'
+		compileOnly 'org.projectlombok:lombok'
+		testAnnotationProcessor 'org.projectlombok:lombok'
+		testCompileOnly 'org.projectlombok:lombok'
+
+		// embedded redis test
+		testImplementation 'it.ozimov:embedded-redis:0.7.1'
+	}
+
+	test {
+		useJUnitPlatform()
+	}
 }
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	// macOS m1에서만 발생??R
-	implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'io.projectreactor:reactor-test'
+// 각 프로젝트에서만 사용하는 의존성 추가
+project(':core') {
+	// core 에서는 bootjar로 패키징 할 필요가 없으므로 추가
+	bootJar.enabled = false
+	jar.enabled = true
 
-	// lombok
-	annotationProcessor 'org.projectlombok:lombok'
-	compileOnly 'org.projectlombok:lombok'
-	testAnnotationProcessor 'org.projectlombok:lombok'
-	testCompileOnly 'org.projectlombok:lombok'
-
-	// embedded redis test
-	testImplementation 'it.ozimov:embedded-redis:0.7.1'
+	dependencies {
+	}
 }
 
-test {
-	useJUnitPlatform()
+project(':publisher') {
+	dependencies {
+		// 컴파일시 core 모듈을 가져온다.
+		compileOnly project(':core')
+	}
+}
+
+project(':consumer') {
+	dependencies {
+		compileOnly project(':core')
+	}
 }

@@ -1,1 +1,4 @@
 rootProject.name = 'slowman'
+include 'consumer'
+include 'publisher'
+include 'core'

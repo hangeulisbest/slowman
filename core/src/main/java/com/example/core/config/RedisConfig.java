@@ -1,4 +1,4 @@
-package com.example.slowman.config;
+package com.example.core.config;
 
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.RedisURI;
@@ -13,26 +13,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.ReactiveRedisOperations;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.data.redis.listener.ReactiveRedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import static com.example.slowman.constants.Topic.MESSAGE_PAYLOAD;
 
 @Slf4j
 @Configuration
@@ -82,23 +75,6 @@ public class RedisConfig {
                 node -> RedisURI.Builder.redis(node.split(":")[0], Integer.parseInt(node.split(":")[1])).build()
         ).collect(Collectors.toList());
         return RedisClusterClient.create(nodes);
-    }
-
-    /*
-    *  PubSub 을 위한 메세지 리스너
-    * */
-
-    @Bean
-    public ChannelTopic payloadTopic() {
-        return new ChannelTopic(MESSAGE_PAYLOAD);
-    }
-
-    @Bean
-    public ReactiveRedisMessageListenerContainer reactiveRedisMessageListenerContainer() {
-        ReactiveRedisMessageListenerContainer con = new ReactiveRedisMessageListenerContainer(createReactiveLettuceConnectionFactory());
-        // default topic
-        con.receive(payloadTopic());
-        return con;
     }
 
 }
