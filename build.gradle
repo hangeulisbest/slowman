@@ -62,9 +62,14 @@ subprojects {
 
 // 각 프로젝트에서만 사용하는 의존성 추가
 project(':core') {
+
+	jar {
+		enabled(true)
+		duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+	}
+
 	// core 에서는 bootjar로 패키징 할 필요가 없으므로 추가
 	bootJar.enabled = false
-	jar.enabled = true
 
 	dependencies {
 	}
@@ -72,13 +77,18 @@ project(':core') {
 
 project(':publisher') {
 	dependencies {
+		// tymeleaf
+		implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+		implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 		// 컴파일시 core 모듈을 가져온다.
-		compileOnly project(':core')
+		implementation project(':core')
+		testImplementation project(':core')
 	}
 }
 
 project(':consumer') {
 	dependencies {
-		compileOnly project(':core')
+		implementation project(':core')
+		testImplementation project(':core')
 	}
 }
