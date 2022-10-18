@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class PayloadSubService {
 
     private final ReactiveRedisOperations<String,Object> redisOperations;
+    private static final int TPS = 10;
 
     @Scheduled(fixedDelay = 1000)
     public void subscribe() throws InterruptedException{
